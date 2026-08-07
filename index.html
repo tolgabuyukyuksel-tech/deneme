@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="description" content="Kiralık Fiat Egea. Net fiyat, kolay rezervasyon, hızlı teslimat." />
+  <title>Kiralık Egea | Oto Kiralama</title>
+  <link rel="icon" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="styles-1.css" />
+  <link rel="stylesheet" href="styles-2.css" />
+  <link rel="stylesheet" href="styles-3.css" />
+</head>
+<body>
+  <header class="site-header" aria-label="Ana menü">
+    <a class="brand" href="#anasayfa" aria-label="Kiralık Egea ana sayfa">
+      <svg class="brand-mark" viewBox="0 0 220 44" aria-hidden="true">
+        <path d="M8 32c30-15 63-14 94-13 15-12 32-16 52-15 17 1 30 8 44 17 6 4 10 6 14 11" />
+        <path d="M51 25h54m47-4h33" />
+      </svg>
+      <span>KİRALIK EGEA</span>
+    </a>
+    <nav class="desktop-nav" aria-label="Sayfa bağlantıları">
+      <a href="#fiyatlar">Fiyatlar</a>
+      <a href="#avantajlar">Hizmet</a>
+      <a href="#rezervasyon">Rezervasyon</a>
+    </nav>
+    <a class="header-cta" href="#rezervasyon">Fiyat Al</a>
+  </header>
+
+  <main id="anasayfa">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">OTO KİRALAMA</p>
+        <h1 id="hero-title">Kiralık Egea.<br /><span>Basit. Net.</span></h1>
+        <p class="hero-text">Temiz araç, net fiyat ve hızlı teslimat. Günlük, haftalık ve uzun dönem kiralama.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#rezervasyon">Hemen Fiyat Al</a>
+          <a class="button button-secondary" href="#fiyatlar">Fiyatları Gör</a>
+        </div>
+        <div class="trust-row" aria-label="Hizmet özellikleri">
+          <span>30 yıllık tecrübe</span>
+          <span>Hızlı teslimat</span>
+          <span>Şeffaf fiyat</span>
+        </div>
+      </div>
+      <div class="hero-visual" aria-label="Beyaz Fiat Egea kiralık araç">
+        <div class="price-badge">
+          <span>Günlük</span>
+          <strong>€45</strong>
+          <small>başlangıç</small>
+        </div>
+        <img src="assets/egea-car.webp" alt="Beyaz Fiat Egea sedan" width="1220" height="610" fetchpriority="high" />
+      </div>
+    </section>
+
+    <section class="pricing section" id="fiyatlar" aria-labelledby="pricing-title">
+      <div class="section-heading">
+        <p class="eyebrow">NET FİYAT</p>
+        <h2 id="pricing-title">Kaç gün kiralayacaksınız?</h2>
+      </div>
+      <div class="price-grid">
+        <article class="price-card"><p>1–3 gün</p><div><strong>€45</strong><span>/ gün</span></div><a href="#rezervasyon">Seç</a></article>
+        <article class="price-card featured"><span class="popular">En çok tercih edilen</span><p>3–7 gün</p><div><strong>€40</strong><span>/ gün</span></div><a href="#rezervasyon">Seç</a></article>
+        <article class="price-card"><p>7–14 gün</p><div><strong>€38</strong><span>/ gün</span></div><a href="#rezervasyon">Seç</a></article>
+      </div>
+      <p class="pricing-note">Fiyatlar Egea sınıfı başlangıç fiyatıdır; tarih, teslim noktası ve müsaitliğe göre değişebilir.</p>
+    </section>
+
+    <section class="benefits section" id="avantajlar" aria-labelledby="benefits-title">
+      <div class="section-heading">
+        <p class="eyebrow">GEREKSİZ DETAY YOK</p>
+        <h2 id="benefits-title">Aracı seçin, teslim yerini söyleyin.</h2>
+      </div>
+      <div class="benefit-grid">
+        <article><span class="benefit-number">01</span><h3>Temiz araç</h3><p>Bakımlı, temiz ve teslimata hazır Egea.</p></article>
+        <article><span class="benefit-number">02</span><h3>Esnek teslimat</h3><p>Havalimanı, otel veya belirlenen adrese teslim.</p></article>
+        <article><span class="benefit-number">03</span><h3>Net iletişim</h3><p>Karmaşık paketler yerine açık şartlar ve hızlı cevap.</p></article>
+      </div>
+    </section>
+
+    <section class="booking section" id="rezervasyon" aria-labelledby="booking-title">
+      <div class="booking-copy">
+        <p class="eyebrow light">REZERVASYON</p>
+        <h2 id="booking-title">Egea’nızı ayıralım.</h2>
+        <p>Tarihleri ve teslim yerini yazın. Talep metniniz anında hazırlansın.</p>
+      </div>
+      <form class="booking-form" id="booking-form">
+        <label>Teslim alma tarihi<input id="pickup-date" type="date" required /></label>
+        <label>İade tarihi<input id="return-date" type="date" required /></label>
+        <label class="wide">Teslim yeri<input id="location" type="text" autocomplete="street-address" placeholder="Havalimanı, otel veya adres" required /></label>
+        <button class="button button-white wide" type="submit">Talep Oluştur</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <a class="footer-brand" href="#anasayfa">KİRALIK EGEA</a>
+    <p>Oto Kiralama</p>
+    <p class="contact-placeholder">+90 5XX XXX XX XX</p>
+  </footer>
+
+  <div class="mobile-bar" aria-label="Hızlı işlem menüsü">
+    <a href="#fiyatlar">Fiyatlar</a>
+    <a class="mobile-primary" href="#rezervasyon">Egea Kirala</a>
+  </div>
+
+  <dialog id="request-dialog" aria-labelledby="dialog-title">
+    <button class="dialog-close" type="button" aria-label="Pencereyi kapat">×</button>
+    <p class="eyebrow">TALEBİNİZ HAZIR</p>
+    <h2 id="dialog-title">Mesajı kopyalayın.</h2>
+    <textarea id="request-text" readonly></textarea>
+    <button class="button button-primary" id="copy-request" type="button">Mesajı Kopyala</button>
+    <p class="dialog-note">Telefon ve WhatsApp numaranız eklendiğinde bu buton doğrudan gönderim yapabilir.</p>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
