@@ -1,0 +1,66 @@
+name: Publish Kiralik Egea Public Mirror
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/publish-egea-mirror.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout dedicated public repository
+        uses: actions/checkout@v4
+
+      - name: Import and validate the Egea vehicle image
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets
+          curl --fail --location --retry 15 --retry-all-errors --retry-delay 2 \
+            'https://kiralik-egea.peopleofvela.com/assets/egea-car.webp' \
+            --output assets/egea-car.webp
+          echo '54f0e273e61edfd8eac939fa7e250cf3264721cd50744ee591a9bdb0593143f7  assets/egea-car.webp' | sha256sum -c -
+
+      - name: Commit the self-contained public copy
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/egea-car.webp
+          if ! git diff --cached --quiet; then
+            git commit -m 'Add verified Egea vehicle asset'
+            git push origin HEAD:main
+          fi
+          echo "PUBLIC_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Verify the independent immutable public URL
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://rawcdn.githack.com/tolgabuyukyuksel-tech/deneme/${PUBLIC_COMMIT}"
+          page="${base}/index.html"
+          for attempt in $(seq 1 30); do
+            page_code=$(curl -L -sS -o /tmp/page.html -w '%{http_code}' "${page}" || true)
+            css_code=$(curl -L -sS -o /tmp/style.css -w '%{http_code}' "${base}/style.css" || true)
+            js_code=$(curl -L -sS -o /tmp/app.js -w '%{http_code}' "${base}/app.js" || true)
+            image_meta=$(curl -L -sS -o /tmp/egea.webp -w '%{http_code} %{content_type}' "${base}/assets/egea-car.webp" || true)
+            if [ "$page_code" = '200' ] && [ "$css_code" = '200' ] && [ "$js_code" = '200' ] \
+              && grep -q '<title>Kiralık Egea | Oto Kiralama</title>' /tmp/page.html \
+              && echo "$image_meta" | grep -q '^200 image/'; then
+              echo "PUBLIC_URL=${page}" | tee -a "$GITHUB_ENV"
+              echo "Public mirror verified: ${page}"
+              echo "Vehicle asset verified: ${image_meta}"
+              exit 0
+            fi
+            echo "attempt=${attempt} page=${page_code} css=${css_code} js=${js_code} image=${image_meta}"
+            sleep 5
+          done
+          exit 1
