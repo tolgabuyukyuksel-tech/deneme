@@ -1,0 +1,23 @@
+name: Export Rent30 Vendor Modules
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/export-rent30-vendor.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rent30-three-vendor
+          path: oto-kiralama-prototip/vendor
+          if-no-files-found: error
+          retention-days: 1
