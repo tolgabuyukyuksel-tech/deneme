@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#ffffff" />
-  <meta name="description" content="Kiralık Fiat Egea. Net fiyat, kolay rezervasyon, hızlı teslimat." />
-  <title>Kiralık Egea | Oto Kiralama</title>
+  <meta name="description" content="Hyundai Bayon, Fiat Egea ve Fiat Doblo kiralama. Araçlara ve gün sayısına göre net fiyatları görün." />
+  <title>Kiralık Egea | Bayon, Egea ve Doblo Oto Kiralama</title>
   <link rel="icon" href="assets/favicon.svg" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -18,30 +18,34 @@
       </svg>
       <span>KİRALIK EGEA</span>
     </a>
+
     <nav class="desktop-nav" aria-label="Sayfa bağlantıları">
-      <a href="#fiyatlar">Fiyatlar</a>
+      <a href="#fiyatlar">Araçlar ve Fiyatlar</a>
       <a href="#avantajlar">Hizmet</a>
-      <a href="#rezervasyon">Rezervasyon</a>
     </nav>
-    <a class="header-cta" href="#rezervasyon">Fiyat Al</a>
+
+    <a class="header-cta" href="#fiyatlar">Araçları Gör</a>
   </header>
 
   <main id="anasayfa">
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-copy">
         <p class="eyebrow">OTO KİRALAMA</p>
-        <h1 id="hero-title">Kiralık Egea.<br /><span>Basit. Net.</span></h1>
-        <p class="hero-text">Temiz araç, net fiyat ve hızlı teslimat. Günlük, haftalık ve uzun dönem kiralama.</p>
+        <h1 id="hero-title">Küçükten büyüğe.<br /><span>Basit. Net.</span></h1>
+        <p class="hero-text">Hyundai Bayon, Fiat Egea ve Fiat Doblo. İhtiyacınıza uygun aracı seçin; gün sayısına göre fiyatı doğrudan görün.</p>
+
         <div class="hero-actions">
-          <a class="button button-primary" href="#rezervasyon">Hemen Fiyat Al</a>
-          <a class="button button-secondary" href="#fiyatlar">Fiyatları Gör</a>
+          <a class="button button-primary" href="#fiyatlar">Araçları ve Fiyatları Gör</a>
+          <a class="button button-secondary" href="#avantajlar">Hizmeti İncele</a>
         </div>
+
         <div class="trust-row" aria-label="Hizmet özellikleri">
           <span>30 yıllık tecrübe</span>
           <span>Hızlı teslimat</span>
           <span>Şeffaf fiyat</span>
         </div>
       </div>
+
       <div class="hero-visual" aria-label="Beyaz Fiat Egea kiralık araç">
         <div class="price-badge">
           <span>Günlük</span>
@@ -52,17 +56,69 @@
       </div>
     </section>
 
-    <section class="pricing section" id="fiyatlar" aria-labelledby="pricing-title">
-      <div class="section-heading">
-        <p class="eyebrow">NET FİYAT</p>
-        <h2 id="pricing-title">Kaç gün kiralayacaksınız?</h2>
+    <section class="fleet-pricing section" id="fiyatlar" aria-labelledby="pricing-title">
+      <div class="section-heading section-heading-split">
+        <div>
+          <p class="eyebrow">ARAÇLAR VE NET FİYAT</p>
+          <h2 id="pricing-title">Aracınızı seçin.</h2>
+        </div>
+        <p class="section-intro">Küçükten büyüğe üç araç. Her aracın günlük ücreti kiralama süresine göre açıkça gösterilir.</p>
       </div>
-      <div class="price-grid">
-        <article class="price-card"><p>1–3 gün</p><div><strong>€45</strong><span>/ gün</span></div><a href="#rezervasyon">Seç</a></article>
-        <article class="price-card featured"><span class="popular">En çok tercih edilen</span><p>3–7 gün</p><div><strong>€40</strong><span>/ gün</span></div><a href="#rezervasyon">Seç</a></article>
-        <article class="price-card"><p>7–14 gün</p><div><strong>€38</strong><span>/ gün</span></div><a href="#rezervasyon">Seç</a></article>
+
+      <div class="vehicle-list">
+        <article class="vehicle-card">
+          <div class="vehicle-identity">
+            <div class="vehicle-copy">
+              <span class="vehicle-size">01 · KOMPAKT</span>
+              <h3>Hyundai Bayon</h3>
+              <p>Şehir içi kullanım için kompakt ve rahat.</p>
+            </div>
+            <img class="vehicle-image" src="assets/bayon-side.webp" alt="Hyundai Bayon yandan görünüm" width="1400" height="560" loading="lazy" />
+          </div>
+          <div class="vehicle-prices" aria-label="Hyundai Bayon günlük kiralama fiyatları">
+            <div class="price-cell"><span>1–3 gün</span><strong>€50</strong><small>/ gün</small></div>
+            <div class="price-cell is-popular"><span>3–7 gün</span><strong>€44</strong><small>/ gün</small><em>En çok tercih edilen</em></div>
+            <div class="price-cell"><span>7–14 gün</span><strong>€42</strong><small>/ gün</small></div>
+            <div class="price-cell"><span>14+ gün</span><strong class="price-text">Özel fiyat</strong><small>uzun dönem</small></div>
+          </div>
+        </article>
+
+        <article class="vehicle-card">
+          <div class="vehicle-identity">
+            <div class="vehicle-copy">
+              <span class="vehicle-size">02 · SEDAN</span>
+              <h3>Fiat Egea</h3>
+              <p>Konforlu, ekonomik ve geniş bagajlı sedan.</p>
+            </div>
+            <img class="vehicle-image" src="assets/egea-side.webp" alt="Fiat Egea yandan görünüm" width="1400" height="560" loading="lazy" />
+          </div>
+          <div class="vehicle-prices" aria-label="Fiat Egea günlük kiralama fiyatları">
+            <div class="price-cell"><span>1–3 gün</span><strong>€45</strong><small>/ gün</small></div>
+            <div class="price-cell is-popular"><span>3–7 gün</span><strong>€40</strong><small>/ gün</small><em>En çok tercih edilen</em></div>
+            <div class="price-cell"><span>7–14 gün</span><strong>€38</strong><small>/ gün</small></div>
+            <div class="price-cell"><span>14+ gün</span><strong class="price-text">Özel fiyat</strong><small>uzun dönem</small></div>
+          </div>
+        </article>
+
+        <article class="vehicle-card">
+          <div class="vehicle-identity">
+            <div class="vehicle-copy">
+              <span class="vehicle-size">03 · GENİŞ</span>
+              <h3>Fiat Doblo</h3>
+              <p>Aile, kalabalık grup ve fazla bagaj için geniş alan.</p>
+            </div>
+            <img class="vehicle-image" src="assets/doblo-side.webp" alt="Fiat Doblo yandan görünüm" width="1400" height="560" loading="lazy" />
+          </div>
+          <div class="vehicle-prices" aria-label="Fiat Doblo günlük kiralama fiyatları">
+            <div class="price-cell"><span>1–3 gün</span><strong>€60</strong><small>/ gün</small></div>
+            <div class="price-cell is-popular"><span>3–7 gün</span><strong>€53</strong><small>/ gün</small><em>En çok tercih edilen</em></div>
+            <div class="price-cell"><span>7–14 gün</span><strong>€51</strong><small>/ gün</small></div>
+            <div class="price-cell"><span>14+ gün</span><strong class="price-text">Özel fiyat</strong><small>uzun dönem</small></div>
+          </div>
+        </article>
       </div>
-      <p class="pricing-note">Fiyatlar Egea sınıfı başlangıç fiyatıdır; tarih, teslim noktası ve müsaitliğe göre değişebilir.</p>
+
+      <p class="pricing-note">Fiyatlar başlangıç fiyatıdır; tarih, teslim noktası ve araç müsaitliğine göre değişebilir. Araç görselleri model tanıtımı amaçlıdır.</p>
     </section>
 
     <section class="benefits section" id="avantajlar" aria-labelledby="benefits-title">
@@ -71,47 +127,34 @@
         <h2 id="benefits-title">Aracı seçin, teslim yerini söyleyin.</h2>
       </div>
       <div class="benefit-grid">
-        <article><span class="benefit-number">01</span><h3>Temiz araç</h3><p>Bakımlı, temiz ve teslimata hazır Egea.</p></article>
-        <article><span class="benefit-number">02</span><h3>Esnek teslimat</h3><p>Havalimanı, otel veya belirlenen adrese teslim.</p></article>
-        <article><span class="benefit-number">03</span><h3>Net iletişim</h3><p>Karmaşık paketler yerine açık şartlar ve hızlı cevap.</p></article>
+        <article>
+          <span class="benefit-number">01</span>
+          <h3>Temiz araç</h3>
+          <p>Bakımlı, temiz ve teslimata hazır araçlar.</p>
+        </article>
+        <article>
+          <span class="benefit-number">02</span>
+          <h3>Esnek teslimat</h3>
+          <p>Havalimanı, otel veya belirlenen adrese teslim.</p>
+        </article>
+        <article>
+          <span class="benefit-number">03</span>
+          <h3>Net iletişim</h3>
+          <p>Karmaşık paketler yerine açık şartlar ve hızlı cevap.</p>
+        </article>
       </div>
-    </section>
-
-    <section class="booking section" id="rezervasyon" aria-labelledby="booking-title">
-      <div class="booking-copy">
-        <p class="eyebrow light">REZERVASYON</p>
-        <h2 id="booking-title">Egea’nızı ayıralım.</h2>
-        <p>Tarihleri ve teslim yerini yazın. Talep metniniz anında hazırlansın.</p>
-      </div>
-      <form class="booking-form" id="booking-form">
-        <label>Teslim alma tarihi<input id="pickup-date" type="date" required /></label>
-        <label>İade tarihi<input id="return-date" type="date" required /></label>
-        <label class="wide">Teslim yeri<input id="location" type="text" autocomplete="street-address" placeholder="Havalimanı, otel veya adres" required /></label>
-        <button class="button button-white wide" type="submit">Talep Oluştur</button>
-      </form>
     </section>
   </main>
 
   <footer>
     <a class="footer-brand" href="#anasayfa">KİRALIK EGEA</a>
-    <p>Oto Kiralama</p>
+    <p>Bayon · Egea · Doblo</p>
     <p class="contact-placeholder">+90 5XX XXX XX XX</p>
   </footer>
 
-  <div class="mobile-bar" aria-label="Hızlı işlem menüsü">
-    <a href="#fiyatlar">Fiyatlar</a>
-    <a class="mobile-primary" href="#rezervasyon">Egea Kirala</a>
+  <div class="mobile-bar" aria-label="Hızlı sayfa menüsü">
+    <a href="#avantajlar">Hizmet</a>
+    <a class="mobile-primary" href="#fiyatlar">Araçlar ve Fiyatlar</a>
   </div>
-
-  <dialog id="request-dialog" aria-labelledby="dialog-title">
-    <button class="dialog-close" type="button" aria-label="Pencereyi kapat">×</button>
-    <p class="eyebrow">TALEBİNİZ HAZIR</p>
-    <h2 id="dialog-title">Mesajı kopyalayın.</h2>
-    <textarea id="request-text" readonly></textarea>
-    <button class="button button-primary" id="copy-request" type="button">Mesajı Kopyala</button>
-    <p class="dialog-note">Telefon ve WhatsApp numaranız eklendiğinde bu buton doğrudan gönderim yapabilir.</p>
-  </dialog>
-
-  <script src="app.js"></script>
 </body>
 </html>
