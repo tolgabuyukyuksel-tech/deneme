@@ -1,0 +1,119 @@
+name: Import Vehicle Side Images
+
+on:
+  push:
+    branches:
+      - update/vehicle-range-20260808
+    paths:
+      - ".github/workflows/import-vehicle-side-images.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  import-images:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout vehicle update branch
+        uses: actions/checkout@v4
+
+      - name: Install image tooling
+        run: python -m pip install --disable-pip-version-check pillow
+
+      - name: Download side-profile vehicle images
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/vehicle-images assets
+
+          download_with_fallbacks() {
+            local output="$1"
+            shift
+            for url in "$@"; do
+              echo "Trying ${url}"
+              if curl --fail --location --retry 5 --retry-all-errors --retry-delay 2 \
+                --connect-timeout 20 --max-time 120 \
+                -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/151 Safari/537.36' \
+                "$url" --output "$output"; then
+                test -s "$output"
+                return 0
+              fi
+            done
+            echo "All image sources failed for ${output}" >&2
+            return 1
+          }
+
+          download_with_fallbacks /tmp/vehicle-images/bayon \
+            'https://dmassets.hyundai.com/is/image/hyundaiautoever/Hyundai_BAYON_2024_Exterior_SHOT05_Side?wid=1800&hei=1000&fit=wrap&fmt=webp' \
+            'https://www.hyundai.rs/upload/images/zoom/hyundai_bayon_2024_exterior_shot05_side_4x3.jpg'
+
+          download_with_fallbacks /tmp/vehicle-images/egea \
+            'https://annus.rs/wp-content/uploads/2025/02/1200x800-TIPO-SEDAN-CITY-02.webp' \
+            'https://www.mmcarcatalog.com/assets/img/cars/fiat-egea-sedan-1-6-urban-diesel-auto-white-2024.webp'
+
+          download_with_fallbacks /tmp/vehicle-images/doblo \
+            'https://www.motornet.it/img/modelli/auto/FIA/DOBLO%20PL%202024_2.jpg'
+
+      - name: Normalize images for the price list
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image, ImageChops, ImageOps
+
+          sources = {
+              "bayon": Path("/tmp/vehicle-images/bayon"),
+              "egea": Path("/tmp/vehicle-images/egea"),
+              "doblo": Path("/tmp/vehicle-images/doblo"),
+          }
+
+          out_dir = Path("assets")
+          out_dir.mkdir(exist_ok=True)
+
+          for name, path in sources.items():
+              with Image.open(path) as source:
+                  image = ImageOps.exif_transpose(source).convert("RGB")
+
+              white = Image.new("RGB", image.size, "white")
+              diff = ImageChops.difference(image, white).convert("L")
+              mask = diff.point(lambda value: 255 if value > 14 else 0)
+              bbox = mask.getbbox()
+
+              if bbox:
+                  left, top, right, bottom = bbox
+                  pad_x = max(18, int((right - left) * 0.035))
+                  pad_y = max(16, int((bottom - top) * 0.08))
+                  bbox = (
+                      max(0, left - pad_x),
+                      max(0, top - pad_y),
+                      min(image.width, right + pad_x),
+                      min(image.height, bottom + pad_y),
+                  )
+                  image = image.crop(bbox)
+
+              image.thumbnail((1240, 430), Image.Resampling.LANCZOS)
+              canvas = Image.new("RGB", (1400, 560), "white")
+              x = (canvas.width - image.width) // 2
+              y = (canvas.height - image.height) // 2 + 8
+              canvas.paste(image, (x, y))
+
+              output = out_dir / f"{name}-side.webp"
+              canvas.save(output, "WEBP", quality=90, method=6)
+              print(f"{output}: {output.stat().st_size} bytes")
+              if output.stat().st_size < 8_000:
+                  raise RuntimeError(f"Generated image is unexpectedly small: {output}")
+          PY
+
+      - name: Commit verified local vehicle images
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/bayon-side.webp assets/egea-side.webp assets/doblo-side.webp
+          git commit -m 'Add Bayon Egea and Doblo side profile images'
+          git push origin HEAD:update/vehicle-range-20260808
