@@ -100,10 +100,9 @@ jobs:
           echo "PUBLIC_URL=$base/index.html" | tee -a "$GITHUB_ENV"
 
       - name: Run browser acceptance tests on independent mirror
-        env:
-          SITE_URL: https://rawcdn.githack.com/tolgabuyukyuksel-tech/deneme/${{ env.PUBLIC_COMMIT }}/oto-kiralama-prototip/index.html
         run: |
           set -euo pipefail
+          export SITE_URL="https://rawcdn.githack.com/tolgabuyukyuksel-tech/deneme/${PUBLIC_COMMIT}/oto-kiralama-prototip/index.html"
           npm install --no-save --ignore-scripts playwright-core@1.54.2
           CHROME_PATH="$(command -v google-chrome-stable || command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
           test -n "$CHROME_PATH"
