@@ -34,7 +34,8 @@ jobs:
             shift
             for url in "$@"; do
               echo "Trying ${url}"
-              if curl --fail --location --retry 5 --retry-all-errors --retry-delay 2 \
+              rm -f "$output"
+              if curl --fail --location --retry 2 --retry-all-errors --retry-delay 2 \
                 --connect-timeout 20 --max-time 120 \
                 -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/151 Safari/537.36' \
                 "$url" --output "$output"; then
@@ -51,11 +52,12 @@ jobs:
             'https://www.hyundai.rs/upload/images/zoom/hyundai_bayon_2024_exterior_shot05_side_4x3.jpg'
 
           download_with_fallbacks /tmp/vehicle-images/egea \
-            'https://annus.rs/wp-content/uploads/2025/02/1200x800-TIPO-SEDAN-CITY-02.webp' \
-            'https://www.mmcarcatalog.com/assets/img/cars/fiat-egea-sedan-1-6-urban-diesel-auto-white-2024.webp'
+            'https://image5.sahibinden.com/staticContent/vehicleStockImagesV2/3334/ffffff/x_1600_900_23451003334-41ea0a22c6e8443ddcd7ab332c03b4c8.jpg' \
+            'https://www.fiat.com.tr/content/dam/fiat2023/tr/egea/egea-sd-lounge-2.jpg'
 
           download_with_fallbacks /tmp/vehicle-images/doblo \
-            'https://www.motornet.it/img/modelli/auto/FIA/DOBLO%20PL%202024_2.jpg'
+            'https://www.motornet.it/img/modelli/auto/FIA/DOBLO%20PL%202024_2.jpg' \
+            'https://www.fiat.com.tr/content/dam/fiat2023/tr/fiatprofessional/modeller/doblo-combi/versiyonlar/easy.jpg'
 
       - name: Normalize images for the price list
         shell: bash
