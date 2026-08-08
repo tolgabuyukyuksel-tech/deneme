@@ -1,0 +1,145 @@
+name: Validate Vehicle Range Update
+
+on:
+  push:
+    branches:
+      - update/vehicle-range-20260808
+    paths:
+      - "index.html"
+      - "style.css"
+      - "assets/**"
+      - ".github/workflows/validate-vehicle-range.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout vehicle update branch
+        uses: actions/checkout@v4
+
+      - name: Install validation dependencies
+        run: python -m pip install --disable-pip-version-check pillow beautifulsoup4
+
+      - name: Validate structure, ordering, prices and removals
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          from PIL import Image
+
+          html = Path('index.html').read_text(encoding='utf-8')
+          css = Path('style.css').read_text(encoding='utf-8')
+          soup = BeautifulSoup(html, 'html.parser')
+
+          required_absent = [
+              "Egea’nızı ayıralım",
+              "booking-form",
+              "request-dialog",
+              "#rezervasyon",
+          ]
+          for value in required_absent:
+              if value in html:
+                  raise AssertionError(f'Removed reservation content still exists: {value}')
+
+          cards = soup.select('.vehicle-card')
+          if len(cards) != 3:
+              raise AssertionError(f'Expected 3 vehicle cards, found {len(cards)}')
+
+          expected = [
+              ('Hyundai Bayon', ['€50', '€44', '€42', 'Özel fiyat']),
+              ('Fiat Egea', ['€45', '€40', '€38', 'Özel fiyat']),
+              ('Fiat Doblo', ['€60', '€53', '€51', 'Özel fiyat']),
+          ]
+          tiers = ['1–3 gün', '3–7 gün', '7–14 gün', '14+ gün']
+
+          for card, (vehicle, prices) in zip(cards, expected):
+              title = card.select_one('h3')
+              if not title or title.get_text(strip=True) != vehicle:
+                  raise AssertionError(f'Vehicle order mismatch, expected {vehicle}')
+
+              cells = card.select('.price-cell')
+              if len(cells) != 4:
+                  raise AssertionError(f'{vehicle}: expected 4 price cells, found {len(cells)}')
+
+              found_tiers = [cell.select_one('span').get_text(strip=True) for cell in cells]
+              found_prices = [cell.select_one('strong').get_text(' ', strip=True) for cell in cells]
+              if found_tiers != tiers:
+                  raise AssertionError(f'{vehicle}: tier mismatch: {found_tiers}')
+              if found_prices != prices:
+                  raise AssertionError(f'{vehicle}: price mismatch: {found_prices}')
+
+          required_css = [
+              '.vehicle-card',
+              'grid-template-columns: repeat(4',
+              '@media (max-width: 760px)',
+              'grid-template-columns: repeat(2',
+          ]
+          for value in required_css:
+              if value not in css:
+                  raise AssertionError(f'Required responsive CSS missing: {value}')
+
+          image_names = ['bayon-side.webp', 'egea-side.webp', 'doblo-side.webp']
+          for name in image_names:
+              path = Path('assets') / name
+              if not path.exists() or path.stat().st_size < 8_000:
+                  raise AssertionError(f'Image missing or too small: {path}')
+              with Image.open(path) as image:
+                  if image.size != (1400, 560):
+                      raise AssertionError(f'{path}: expected 1400x560, got {image.size}')
+                  if image.format != 'WEBP':
+                      raise AssertionError(f'{path}: expected WEBP, got {image.format}')
+
+          print('Structure, order, prices, removals, responsive CSS and images validated.')
+          PY
+
+      - name: Verify page over a local HTTP server
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8080 --bind 127.0.0.1 > /tmp/egea-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill $server_pid' EXIT
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:8080/ -o /tmp/index.html; then
+              break
+            fi
+            sleep 1
+          done
+          grep -q '<title>Kiralık Egea | Bayon, Egea ve Doblo Oto Kiralama</title>' /tmp/index.html
+          curl --fail --silent http://127.0.0.1:8080/style.css -o /tmp/style.css
+          for image in bayon-side.webp egea-side.webp doblo-side.webp; do
+            type=$(curl --fail --silent --head "http://127.0.0.1:8080/assets/${image}" | tr -d '\r' | awk -F': ' 'tolower($1)=="content-type" {print $2}')
+            case "$type" in image/webp*) ;; *) echo "Wrong content type for ${image}: ${type}"; exit 1;; esac
+          done
+
+      - name: Render desktop and mobile smoke screenshots
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8081 --bind 127.0.0.1 > /tmp/egea-render.log 2>&1 &
+          server_pid=$!
+          trap 'kill $server_pid' EXIT
+          sleep 2
+          chrome=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
+          "$chrome" --headless --no-sandbox --disable-gpu --hide-scrollbars \
+            --window-size=1440,1400 --screenshot=/tmp/egea-desktop.png http://127.0.0.1:8081/
+          "$chrome" --headless --no-sandbox --disable-gpu --hide-scrollbars \
+            --window-size=390,844 --screenshot=/tmp/egea-mobile.png http://127.0.0.1:8081/
+          python - <<'PY'
+          from PIL import Image
+          for path, expected in [('/tmp/egea-desktop.png', (1440, 1400)), ('/tmp/egea-mobile.png', (390, 844))]:
+              with Image.open(path) as image:
+                  if image.size != expected:
+                      raise AssertionError(f'{path}: expected {expected}, got {image.size}')
+                  extrema = image.convert('L').getextrema()
+                  if extrema == (255, 255):
+                      raise AssertionError(f'{path}: screenshot is blank')
+                  print(path, image.size, extrema)
+          PY
