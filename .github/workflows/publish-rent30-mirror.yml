@@ -1,0 +1,83 @@
+name: Publish Oto Kiralama Independent Mirror
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/publish-rent30-mirror.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout dedicated public repository
+        uses: actions/checkout@v4
+
+      - name: Capture the complete rental prototype as static HTML
+        shell: bash
+        run: |
+          set -euo pipefail
+          target='oto-kiralama-prototip'
+          mkdir -p "$target"
+
+          curl --fail --location --retry 20 --retry-all-errors --retry-delay 2 \
+            'https://oto-kiralama-akis-test.tolga-buyukyuksel.workers.dev/' \
+            --output "$target/index.html"
+
+          grep -q '<title>NEXT RENT | Kiralamanın Yeni Yolu</title>' "$target/index.html"
+          grep -q 'YOLUN SİZİN' "$target/index.html"
+          grep -q '30 YILLIK KİRALAMA DENEYİMİ' "$target/index.html"
+
+          if grep -qi 'peopleofvela\.com' "$target/index.html"; then
+            echo 'Forbidden People of Vela reference found in published page.'
+            exit 1
+          fi
+
+          printf '%s\n' '{"ok":true,"project":"oto-kiralama-prototip","host":"independent-public-mirror"}' > "$target/health.json"
+          touch "$target/.nojekyll"
+
+      - name: Commit the independent static copy
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add oto-kiralama-prototip
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish independent oto kiralama prototype mirror'
+            git push origin HEAD:main
+          fi
+          echo "PUBLIC_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Verify immutable public CDN page
+        shell: bash
+        run: |
+          set -euo pipefail
+          page="https://rawcdn.githack.com/tolgabuyukyuksel-tech/deneme/${PUBLIC_COMMIT}/oto-kiralama-prototip/index.html"
+          health="https://rawcdn.githack.com/tolgabuyukyuksel-tech/deneme/${PUBLIC_COMMIT}/oto-kiralama-prototip/health.json"
+
+          for attempt in $(seq 1 40); do
+            page_meta=$(curl -L -sS -o /tmp/rent30.html -w '%{http_code} %{content_type}' "$page" || true)
+            health_code=$(curl -L -sS -o /tmp/rent30-health.json -w '%{http_code}' "$health" || true)
+
+            if echo "$page_meta" | grep -q '^200 text/html' \
+              && [ "$health_code" = '200' ] \
+              && grep -q 'YOLUN SİZİN' /tmp/rent30.html \
+              && grep -q '30 YILLIK KİRALAMA DENEYİMİ' /tmp/rent30.html \
+              && grep -q '"ok":true' /tmp/rent30-health.json; then
+              echo "PUBLIC_URL=${page}" | tee -a "$GITHUB_ENV"
+              echo "Independent page verified: ${page}"
+              exit 0
+            fi
+
+            echo "attempt=${attempt} page=${page_meta} health=${health_code}"
+            sleep 4
+          done
+
+          exit 1
