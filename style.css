@@ -9,6 +9,7 @@
   --radius: 24px;
   --shadow: 0 22px 60px rgba(6, 42, 92, 0.12);
 }
+
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
@@ -19,8 +20,9 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 a { color: inherit; text-decoration: none; }
-button, input, textarea { font: inherit; }
-button { cursor: pointer; }
+img { max-width: 100%; }
+h1, h2, h3, p { margin-top: 0; }
+
 .site-header {
   position: sticky;
   top: 0;
@@ -35,6 +37,7 @@ button { cursor: pointer; }
   border-bottom: 1px solid rgba(220, 226, 234, 0.8);
   backdrop-filter: blur(14px);
 }
+
 .brand {
   display: inline-flex;
   flex-direction: column;
@@ -58,6 +61,7 @@ button { cursor: pointer; }
   font-size: 14px;
   font-weight: 800;
 }
+
 .hero {
   display: grid;
   grid-template-columns: minmax(320px, 0.92fr) minmax(520px, 1.35fr);
@@ -76,8 +80,6 @@ button { cursor: pointer; }
   font-weight: 900;
   letter-spacing: 0.2em;
 }
-.eyebrow.light { color: rgba(255, 255, 255, 0.7); }
-h1, h2, h3, p { margin-top: 0; }
 h1 {
   margin-bottom: 22px;
   font-size: clamp(48px, 5.4vw, 84px);
@@ -86,7 +88,7 @@ h1 {
 }
 h1 span { color: var(--navy); }
 .hero-text {
-  max-width: 560px;
+  max-width: 590px;
   margin-bottom: 30px;
   color: var(--muted);
   font-size: clamp(17px, 1.35vw, 21px);
@@ -108,9 +110,9 @@ h1 span { color: var(--navy); }
 .button-primary { color: var(--white); background: var(--navy); box-shadow: 0 12px 28px rgba(6, 42, 92, 0.18); }
 .button-primary:hover { background: var(--navy-dark); }
 .button-secondary { color: var(--navy); background: var(--white); border-color: var(--line); }
-.button-white { color: var(--navy); background: var(--white); }
 .trust-row { display: flex; flex-wrap: wrap; gap: 10px 20px; margin-top: 28px; color: #475467; font-size: 13px; font-weight: 700; }
 .trust-row span::before { content: "✓"; margin-right: 7px; color: var(--navy); font-weight: 950; }
+
 .hero-visual { position: relative; display: grid; place-items: center; min-width: 0; }
 .hero-visual::before {
   content: "";
@@ -141,28 +143,101 @@ h1 span { color: var(--navy); }
 }
 .price-badge span, .price-badge small { font-size: 12px; font-weight: 750; }
 .price-badge strong { margin: 1px 0 -1px; font-size: 37px; line-height: 1; letter-spacing: -0.05em; }
+
 .section { width: min(1200px, calc(100% - 48px)); margin: 0 auto; padding: 100px 0; }
-.section-heading { max-width: 720px; margin-bottom: 42px; }
+.section-heading { max-width: 760px; margin-bottom: 42px; }
 .section-heading h2 { margin-bottom: 0; font-size: clamp(36px, 4.1vw, 62px); line-height: 1.04; letter-spacing: -0.045em; }
-.price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: stretch; }
-.price-card {
+.section-heading-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 430px);
+  gap: 54px;
+  align-items: end;
+  max-width: none;
+}
+.section-intro { margin: 0 0 6px; color: var(--muted); font-size: 16px; line-height: 1.65; }
+
+.fleet-pricing { border-top: 1px solid var(--line); }
+.vehicle-list { display: grid; gap: 18px; }
+.vehicle-card {
+  display: grid;
+  grid-template-columns: minmax(390px, 0.95fr) minmax(560px, 1.15fr);
+  gap: 24px;
+  align-items: stretch;
+  padding: 22px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  box-shadow: 0 14px 40px rgba(6, 42, 92, 0.055);
+}
+.vehicle-identity {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(150px, 0.6fr) minmax(200px, 1.1fr);
+  align-items: center;
+  min-height: 220px;
+  padding: 22px 10px 12px 24px;
+  overflow: hidden;
+  background: linear-gradient(145deg, #f8fafc 0%, #eef3f8 100%);
+  border-radius: 20px;
+}
+.vehicle-copy { position: relative; z-index: 2; align-self: start; padding-top: 4px; }
+.vehicle-size {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--navy);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+}
+.vehicle-copy h3 { margin-bottom: 8px; font-size: clamp(28px, 2.5vw, 38px); line-height: 1; letter-spacing: -0.045em; }
+.vehicle-copy p { max-width: 220px; margin-bottom: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+.vehicle-image {
+  align-self: end;
+  width: 115%;
+  max-width: none;
+  height: auto;
+  margin-left: -5%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+.vehicle-prices {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.price-cell {
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 260px;
-  padding: 30px;
+  justify-content: center;
+  min-height: 220px;
+  padding: 20px 17px;
   background: var(--soft);
   border: 1px solid #e8ecf2;
-  border-radius: var(--radius);
+  border-radius: 18px;
 }
-.price-card.featured { color: var(--white); background: var(--navy); border-color: var(--navy); box-shadow: var(--shadow); transform: translateY(-12px); }
-.price-card p { margin-bottom: 34px; color: inherit; font-size: 18px; font-weight: 850; }
-.price-card div { display: flex; align-items: baseline; gap: 7px; }
-.price-card strong { font-size: 54px; letter-spacing: -0.06em; }
-.price-card span { color: inherit; opacity: 0.72; }
-.price-card a { align-self: flex-start; margin-top: auto; padding-bottom: 3px; border-bottom: 2px solid currentColor; font-weight: 850; }
-.popular { position: absolute; top: 22px; right: 24px; font-size: 11px; font-weight: 850; letter-spacing: 0.06em; text-transform: uppercase; }
-.pricing-note { max-width: 850px; margin: 26px auto 0; color: var(--muted); font-size: 13px; text-align: center; }
+.price-cell > span { margin-bottom: 20px; color: #475467; font-size: 13px; font-weight: 850; }
+.price-cell strong { color: var(--navy); font-size: clamp(37px, 3.1vw, 50px); line-height: 0.95; letter-spacing: -0.065em; }
+.price-cell strong.price-text { max-width: 110px; font-size: clamp(23px, 2vw, 30px); line-height: 1; letter-spacing: -0.045em; }
+.price-cell small { margin-top: 7px; color: var(--muted); font-size: 12px; font-weight: 700; }
+.price-cell em {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  left: 12px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-transform: uppercase;
+}
+.price-cell.is-popular { color: var(--white); background: var(--navy); border-color: var(--navy); }
+.price-cell.is-popular > span, .price-cell.is-popular strong, .price-cell.is-popular small { color: var(--white); }
+.pricing-note { max-width: 900px; margin: 24px auto 0; color: var(--muted); font-size: 12px; line-height: 1.55; text-align: center; }
+
 .benefits { border-top: 1px solid var(--line); }
 .benefit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 .benefit-grid article { min-height: 270px; padding: 34px; border-right: 1px solid var(--line); }
@@ -170,34 +245,7 @@ h1 span { color: var(--navy); }
 .benefit-number { display: block; margin-bottom: 60px; color: var(--navy); font-size: 13px; font-weight: 900; }
 .benefit-grid h3 { margin-bottom: 10px; font-size: 25px; letter-spacing: -0.03em; }
 .benefit-grid p { margin-bottom: 0; color: var(--muted); line-height: 1.6; }
-.booking {
-  display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
-  gap: 70px;
-  width: min(1280px, calc(100% - 48px));
-  margin-bottom: 70px;
-  padding: 68px;
-  color: var(--white);
-  background: var(--navy);
-  border-radius: 32px;
-}
-.booking-copy h2 { margin-bottom: 18px; font-size: clamp(42px, 5vw, 68px); line-height: 1; letter-spacing: -0.05em; }
-.booking-copy p:last-child { max-width: 440px; margin-bottom: 0; color: rgba(255, 255, 255, 0.72); font-size: 17px; line-height: 1.55; }
-.booking-form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.booking-form label { display: grid; gap: 8px; color: rgba(255, 255, 255, 0.78); font-size: 13px; font-weight: 750; }
-.booking-form .wide { grid-column: 1 / -1; }
-.booking-form input {
-  width: 100%;
-  min-height: 54px;
-  padding: 0 16px;
-  color: var(--ink);
-  background: var(--white);
-  border: 0;
-  border-radius: 14px;
-  outline: none;
-}
-.booking-form input:focus { box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2); }
-.booking-form .button { margin-top: 6px; border: 0; }
+
 footer {
   display: grid;
   grid-template-columns: 1fr auto auto;
@@ -213,18 +261,14 @@ footer {
 footer p { margin: 0; }
 .contact-placeholder { color: var(--ink); font-weight: 800; }
 .mobile-bar { display: none; }
-#request-dialog {
-  width: min(560px, calc(100% - 32px));
-  padding: 34px;
-  border: 0;
-  border-radius: 24px;
-  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.25);
+
+@media (max-width: 1100px) {
+  .vehicle-card { grid-template-columns: 1fr; }
+  .vehicle-identity { grid-template-columns: minmax(200px, 0.65fr) minmax(300px, 1.35fr); }
+  .vehicle-image { width: 100%; margin-left: 0; }
+  .price-cell { min-height: 180px; }
 }
-#request-dialog::backdrop { background: rgba(4, 28, 62, 0.66); backdrop-filter: blur(4px); }
-#request-dialog h2 { margin-bottom: 18px; font-size: 34px; letter-spacing: -0.04em; }
-#request-dialog textarea { width: 100%; min-height: 145px; margin-bottom: 16px; padding: 16px; resize: vertical; border: 1px solid var(--line); border-radius: 14px; line-height: 1.55; }
-.dialog-close { position: absolute; top: 14px; right: 17px; padding: 0; color: var(--muted); background: transparent; border: 0; font-size: 30px; line-height: 1; }
-.dialog-note { margin: 14px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+
 @media (max-width: 980px) {
   .site-header { grid-template-columns: 1fr auto; width: min(100% - 32px, 920px); }
   .desktop-nav { display: none; }
@@ -235,9 +279,10 @@ footer p { margin: 0; }
   .hero-visual { margin-top: 24px; }
   .hero-visual img { width: min(100%, 820px); }
   .price-badge { top: 0; right: 2%; }
-  .booking { grid-template-columns: 1fr; gap: 36px; padding: 48px; }
+  .section-heading-split { grid-template-columns: 1fr; gap: 18px; }
 }
-@media (max-width: 720px) {
+
+@media (max-width: 760px) {
   body { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
   .site-header { min-height: 68px; }
   .brand { font-size: 14px; }
@@ -254,19 +299,34 @@ footer p { margin: 0; }
   .price-badge { top: 1%; right: -2%; min-width: 104px; padding: 13px; border-width: 5px; }
   .price-badge strong { font-size: 29px; }
   .price-badge span, .price-badge small { font-size: 10px; }
-  .section { width: min(100% - 32px, 620px); padding: 72px 0; }
+
+  .section { width: min(100% - 24px, 620px); padding: 72px 0; }
   .section-heading { margin-bottom: 28px; }
   .section-heading h2 { font-size: 38px; }
-  .price-grid { grid-template-columns: 1fr; }
-  .price-card { min-height: 200px; }
-  .price-card.featured { transform: none; }
+  .section-intro { font-size: 15px; }
+
+  .vehicle-list { gap: 14px; }
+  .vehicle-card { gap: 12px; padding: 12px; border-radius: 23px; }
+  .vehicle-identity {
+    grid-template-columns: 1fr;
+    min-height: 300px;
+    padding: 24px 18px 6px;
+  }
+  .vehicle-copy { padding: 0 4px; }
+  .vehicle-copy p { max-width: 280px; }
+  .vehicle-image { align-self: end; width: 108%; margin: 2px 0 -2px -4%; }
+  .vehicle-prices { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .price-cell { min-height: 148px; padding: 17px 14px; border-radius: 16px; }
+  .price-cell > span { margin-bottom: 14px; font-size: 12px; }
+  .price-cell strong { font-size: 39px; }
+  .price-cell strong.price-text { font-size: 24px; }
+  .price-cell em { font-size: 8px; }
+
   .benefit-grid { grid-template-columns: 1fr; }
   .benefit-grid article { min-height: 210px; border-right: 0; border-bottom: 1px solid var(--line); }
   .benefit-grid article:last-child { border-bottom: 0; }
   .benefit-number { margin-bottom: 32px; }
-  .booking { width: calc(100% - 20px); margin-bottom: 46px; padding: 36px 22px; border-radius: 24px; }
-  .booking-form { grid-template-columns: 1fr; }
-  .booking-form .wide { grid-column: auto; }
+
   footer { grid-template-columns: 1fr; width: min(100% - 32px, 620px); gap: 8px; padding-bottom: 34px; }
   .mobile-bar {
     position: fixed;
@@ -285,6 +345,7 @@ footer p { margin: 0; }
   .mobile-bar a { display: grid; min-height: 50px; place-items: center; border: 1px solid var(--line); border-radius: 999px; font-weight: 850; }
   .mobile-bar .mobile-primary { color: var(--white); background: var(--navy); border-color: var(--navy); }
 }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .button { transition: none; }
