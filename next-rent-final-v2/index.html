@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NEXT RENT yükleniyor</title>
+<style>html,body{height:100%;margin:0;background:#05090b;color:#f5f7f3;font-family:Arial,sans-serif}body{display:grid;place-items:center}.load{text-align:center}.dot{width:12px;height:12px;border-radius:50%;background:#bce51d;margin:0 auto 14px;box-shadow:0 0 22px #bce51d;animation:p 1s infinite alternate}@keyframes p{to{opacity:.25;transform:scale(.72)}}</style>
+</head>
+<body><div class="load"><div class="dot"></div><b>NEXT RENT AÇILIYOR</b></div>
+<script>
+(async()=>{
+ const htmlParts=['html-00.b64','html-01.b64','html-02.b64'];
+ const assets=['sedan-empty','sedan-one','sedan-stroller','cross-empty','cross-one','cross-stroller'];
+ const [hp,...ap]=await Promise.all([
+   Promise.all(htmlParts.map(p=>fetch(p,{cache:'no-store'}).then(r=>{if(!r.ok)throw Error(p);return r.text()}))),
+   ...assets.map(n=>fetch('assets/'+n+'.b64',{cache:'force-cache'}).then(r=>{if(!r.ok)throw Error(n);return r.text()}))
+ ]);
+ let html=new TextDecoder().decode(Uint8Array.from(atob(hp.join('')),c=>c.charCodeAt(0)));
+ assets.forEach((n,i)=>{html=html.split('assets/'+n+'.webp').join('data:image/webp;base64,'+ap[i].trim())});
+ document.open();document.write(html);document.close();
+})().catch(err=>{document.body.innerHTML='<main style="padding:24px;text-align:center"><h1>Site yüklenemedi</h1><p>'+String(err)+'</p></main>'});
+</script>
+</body></html>
