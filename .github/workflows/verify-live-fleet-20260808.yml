@@ -1,0 +1,88 @@
+name: Verify Live Fleet Page 20260808
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/verify-live-fleet-20260808.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify-live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Verify public DNS, HTML, CSS and all vehicle images
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://tolgabuyukyuksel-tech.github.io/deneme'
+          host='tolgabuyukyuksel-tech.github.io'
+
+          for attempt in $(seq 1 60); do
+            stamp=$(date +%s%N)
+            google_dns=$(curl --fail --silent --show-error \
+              -H 'accept: application/dns-json' \
+              "https://dns.google/resolve?name=${host}&type=A" || true)
+            cloudflare_dns=$(curl --fail --silent --show-error \
+              -H 'accept: application/dns-json' \
+              "https://cloudflare-dns.com/dns-query?name=${host}&type=A" || true)
+
+            google_ok=$(printf '%s' "$google_dns" | python -c 'import json,sys; b=json.load(sys.stdin); print(str(b.get("Status") == 0 and bool(b.get("Answer"))).lower())' 2>/dev/null || echo false)
+            cloudflare_ok=$(printf '%s' "$cloudflare_dns" | python -c 'import json,sys; b=json.load(sys.stdin); print(str(b.get("Status") == 0 and bool(b.get("Answer"))).lower())' 2>/dev/null || echo false)
+
+            page_code=$(curl --location --silent --show-error \
+              -H 'Cache-Control: no-cache' \
+              -o /tmp/live-index.html -w '%{http_code}' \
+              "${base}/?v=${stamp}" || true)
+            css_meta=$(curl --location --silent --show-error \
+              -H 'Cache-Control: no-cache' \
+              -o /tmp/live-style.css -w '%{http_code} %{content_type}' \
+              "${base}/style.css?v=${stamp}" || true)
+
+            images_ok=true
+            for image in bayon-side.webp egea-side.webp doblo-side.webp; do
+              meta=$(curl --location --silent --show-error \
+                -H 'Cache-Control: no-cache' \
+                -o "/tmp/${image}" -w '%{http_code} %{content_type} %{size_download}' \
+                "${base}/assets/${image}?v=${stamp}" || true)
+              echo "attempt=${attempt} ${image}=${meta}"
+              case "$meta" in '200 image/webp '*) ;; *) images_ok=false ;; esac
+            done
+
+            html_ok=false
+            css_ok=false
+            booking_removed=false
+            if [ "$page_code" = '200' ] \
+              && grep -q '<title>Kiralık Egea | Bayon, Egea ve Doblo Oto Kiralama</title>' /tmp/live-index.html \
+              && grep -q 'Hyundai Bayon' /tmp/live-index.html \
+              && grep -q 'Fiat Egea' /tmp/live-index.html \
+              && grep -q 'Fiat Doblo' /tmp/live-index.html \
+              && grep -q '14+ gün' /tmp/live-index.html; then
+              html_ok=true
+            fi
+            if ! grep -q 'Egea’nızı ayıralım' /tmp/live-index.html \
+              && ! grep -q 'booking-form' /tmp/live-index.html; then
+              booking_removed=true
+            fi
+            case "$css_meta" in '200 text/css'*) css_ok=true ;; esac
+
+            echo "attempt=${attempt} googleDns=${google_ok} cloudflareDns=${cloudflare_ok} page=${page_code} html=${html_ok} css=${css_meta} bookingRemoved=${booking_removed} images=${images_ok}"
+
+            if [ "$google_ok" = true ] \
+              && [ "$cloudflare_ok" = true ] \
+              && [ "$html_ok" = true ] \
+              && [ "$css_ok" = true ] \
+              && [ "$booking_removed" = true ] \
+              && [ "$images_ok" = true ]; then
+              echo "LIVE_URL=${base}/"
+              echo 'Independent live verification passed.'
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
